@@ -94,14 +94,24 @@ int main(int argc, char **argv) {
 
         cgh.parallel_for(ndrange, 
                          [=](nd_item<3> item)[[intel::reqd_sub_group_size(SG_SZ)]] {
-                            const auto threadIdx = item.get_local_id(2);
-                            const auto index = threadIdx * 2 & 510;
+                            int16_t threadIdx = item.get_local_id(2);
+                            int16_t idx_4 = threadIdx * 2;
+                            int16_t idx_5 = idx_4 & (int16_t)126;
+                            int16_t idx_8 = idx_4 & (int16_t)384;
+
+                            int32_t scratch_idx_6 = threadIdx * 2;
+                            int32_t scratch_idx_16 = scratch_idx_6 & 510;
+                            int64_t scratch_idx_17 = (int64_t)scratch_idx_16;
+
+                            float *base = dev_in + (int64_t)(idx_8);
+                            float *addr = base + (int64_t)idx_5;
+
                             // out << "input[" << threadIdx << "] = " << dev_in[index] << "\n";
-                            scratch[index] = dev_in[index];
+                            scratch[scratch_idx_17] = *addr;
                             item.barrier(sycl::access::fence_space::local_space);
-                            auto val = scratch[index];
+                            auto val = scratch[scratch_idx_17];
                             if (threadIdx < 64) {
-                              dev_out[index] = val;
+                              *(dev_out+(int64_t)idx_8+(int64_t)idx_5) = val;
                               // out << "input[" << threadIdx << "] = " << dev_out[index] << "\n";
                             }
                          });
