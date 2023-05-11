@@ -95,7 +95,7 @@ int main(int argc, char **argv) {
         cgh.parallel_for(ndrange, 
                          [=](nd_item<3> item)[[intel::reqd_sub_group_size(SG_SZ)]] {
                             const auto threadIdx = item.get_local_id(2);
-                            const auto index = threadIdx * 2;
+                            const auto index = threadIdx * 2 & 510;
                             // out << "input[" << threadIdx << "] = " << dev_in[index] << "\n";
                             scratch[index] = dev_in[index];
                             item.barrier(sycl::access::fence_space::local_space);

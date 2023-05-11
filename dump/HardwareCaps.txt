@@ -1,0 +1,22 @@
+// ------------------------------------------------
+// HardwareCaps.txt
+// ------------------------------------------------
+// Hardware Caps :
+EUCount 		= 	96
+ThreadCount 		= 	672
+SliceCount 		= 	1
+SubSliceCount 		= 	12
+TotalPsThreadsWindowerRange 		= 	128
+TotalVsThreads 		= 	546TotalVsThreads_Pocs 		= 	0
+TotalGsThreads 		= 	336
+TotalDsThreads 		= 	546
+TotalHsThreads 		= 	336
+MaxEuPerSubSlice 		= 	8
+EuCountPerPoolMax 		= 	0
+EuCountPerPoolMin 		= 	0
+MaxSlicesSupported 		= 	1
+MaxSubSlicesSupported 		= 	12
+UsDeviceID 		= 	0x46a6
+UsRevId 		= 	0xc
+UsDeviceID_PCH 		= 	0x5182
+UsRevId_PCH 		= 	0x1

@@ -1,0 +1,119 @@
+.version 4.1
+.kernel "_ZTSZZ4mainENKUlRT_E_clIN4sycl3_V17handlerEEEDaS0_EUlNS4_7nd_itemILi3EEEE_"
+
+/// VISA Predefined Variables
+// .decl V0 v_type=G v_name=%null
+// .decl V1 v_type=G v_name=%thread_x
+// .decl V2 v_type=G v_name=%thread_y
+// .decl V3 v_type=G v_name=%group_id_x
+// .decl V4 v_type=G v_name=%group_id_y
+// .decl V5 v_type=G v_name=%group_id_z
+// .decl V6 v_type=G v_name=%tsc
+// .decl V7 v_type=G v_name=%r0
+// .decl V8 v_type=G v_name=%arg
+// .decl V9 v_type=G v_name=%retval
+// .decl V10 v_type=G v_name=%sp
+// .decl V11 v_type=G v_name=%fp
+// .decl V12 v_type=G v_name=%hw_id
+// .decl V13 v_type=G v_name=%sr0
+// .decl V14 v_type=G v_name=%cr0
+// .decl V15 v_type=G v_name=%ce0
+// .decl V16 v_type=G v_name=%dbg0
+// .decl V17 v_type=G v_name=%color
+// .decl V18 v_type=G v_name=%impl_arg_buf_ptr
+// .decl V19 v_type=G v_name=%local_id_buf_ptr
+// .decl V20 v_type=G v_name=%msg0
+// .decl T0 v_type=T v_name=%slm
+// .decl T1 v_type=T v_name=T1
+// .decl T2 v_type=T v_name=T2
+// .decl T3 v_type=T v_name=TSS
+// .decl T4 v_type=T v_name=%bss
+// .decl T5 v_type=T v_name=%scratch
+
+.decl V0032 v_type=G type=d num_elts=8 align=hword
+.decl V0033 v_type=G type=d num_elts=8 align=hword alias=<%r0, 0>
+.decl V0034 v_type=G type=d num_elts=8 align=hword
+.decl V0035 v_type=G type=d num_elts=8 align=hword alias=<%r0, 0>
+.decl V0036 v_type=G type=d num_elts=8 align=hword
+.decl V0037 v_type=G type=w num_elts=16 align=hword
+.decl V0038 v_type=G type=w num_elts=16 align=hword
+.decl V0039 v_type=G type=w num_elts=16 align=hword
+.decl V0040 v_type=G type=w num_elts=16 align=hword
+.decl V0041 v_type=G type=w num_elts=16 align=hword
+.decl V0042 v_type=G type=w num_elts=16 align=hword
+.decl V0043 v_type=G type=d num_elts=1 align=dword
+.decl V0044 v_type=G type=d num_elts=1 align=dword
+.decl V0045 v_type=G type=d num_elts=16 align=hword
+.decl V0046 v_type=G type=d num_elts=16 align=hword
+.decl V0047 v_type=G type=uw num_elts=16 align=hword alias=<V0037, 0>
+.decl V0048 v_type=G type=uw num_elts=16 align=hword alias=<V0038, 0>
+.decl V0049 v_type=G type=d num_elts=16 align=hword
+.decl V0050 v_type=G type=d num_elts=16 align=hword
+.decl V0051 v_type=G type=ud num_elts=16 align=hword alias=<V0049, 0>
+.decl V0052 v_type=G type=ud num_elts=16 align=hword alias=<V0050, 0>
+.decl V0053 v_type=G type=d num_elts=16 align=hword
+.decl V0054 v_type=G type=d num_elts=16 align=hword
+.decl V0055 v_type=G type=d num_elts=16 align=hword
+.decl V0056 v_type=G type=d num_elts=16 align=hword
+.decl V0057 v_type=G type=ud num_elts=16 align=hword alias=<V0055, 0>
+.decl V0058 v_type=G type=ud num_elts=16 align=hword alias=<V0056, 0>
+.decl V0059 v_type=G type=d num_elts=16 align=hword
+.decl V0060 v_type=G type=d num_elts=16 align=hword
+.decl V0061 v_type=G type=ud num_elts=1 align=dword
+.decl V0062 v_type=G type=uq num_elts=1 align=qword
+.decl V0063 v_type=G type=uq num_elts=1 align=qword
+.decl P1 v_type=P num_elts=32
+.decl S0 v_type=S num_elts=1 v_name=S000
+.decl T6 v_type=T num_elts=1 v_name=T006
+.input V0037 offset=32 size=32
+.input V0038 offset=64 size=32
+.input V0039 offset=96 size=32
+.input V0040 offset=128 size=32
+.input V0041 offset=160 size=32
+.input V0042 offset=192 size=32
+.input V0036 offset=224 size=32
+.input V0061 offset=256 size=4
+.input V0062 offset=264 size=8
+.input V0063 offset=272 size=8
+.kernel_attr Target="3d"
+.kernel_attr SimdSize=32    
+.function "_main_0"
+
+_main_0:
+    or (M1_NM, 1) %cr0(0,0)<1> %cr0(0,0)<0;1,0> 0x4c0:ud                         /// $1
+    mov (M1, 16) V0045(0,0)<1> V0047(0,0)<1;1,0>                                 /// $2
+    mov (M5, 16) V0046(0,0)<1> V0048(0,0)<1;1,0>                                 /// $3
+    shl (M1, 16) V0045(0,0)<1> V0045(0,0)<1;1,0> 0x1:d                           /// $4
+    shl (M5, 16) V0046(0,0)<1> V0046(0,0)<1;1,0> 0x1:d                           /// $5
+    and (M1, 16) V0045(0,0)<1> V0045(0,0)<1;1,0> 0x1fe:d                         /// $6
+    and (M5, 16) V0046(0,0)<1> V0046(0,0)<1;1,0> 0x1fe:d                         /// $7
+    shl (M1, 16) V0049(0,0)<1> V0045(0,0)<1;1,0> 0x2:d                           /// $8
+    shl (M5, 16) V0050(0,0)<1> V0046(0,0)<1;1,0> 0x2:d                           /// $9
+    movs (M1_NM, 1) T6(0) 0x0:ud                                                 /// $10
+    gather4_scaled.R (M1, 16) T6 0x0:ud V0051.0 V0053.0                          /// $11
+    movs (M1_NM, 1) T6(0) 0x0:ud                                                 /// $12
+    gather4_scaled.R (M5, 16) T6 0x0:ud V0052.0 V0054.0                          /// $13
+    mov (M1, 16) V0055(0,0)<1> V0047(0,0)<1;1,0>                                 /// $14
+    mov (M5, 16) V0056(0,0)<1> V0048(0,0)<1;1,0>                                 /// $15
+    shl (M1, 16) V0055(0,0)<1> V0055(0,0)<1;1,0> 0x3:d                           /// $16
+    shl (M5, 16) V0056(0,0)<1> V0056(0,0)<1;1,0> 0x3:d                           /// $17
+    and (M1, 16) V0055(0,0)<1> V0055(0,0)<1;1,0> 0x7f8:d                         /// $18
+    and (M5, 16) V0056(0,0)<1> V0056(0,0)<1;1,0> 0x7f8:d                         /// $19
+    scatter4_scaled.R (M1, 16) %slm 0x0:ud V0057.0 V0053.0                       /// $20
+    scatter4_scaled.R (M5, 16) %slm 0x0:ud V0058.0 V0054.0                       /// $21
+    fence_local.E                                                                /// $22
+    barrier                                                                      /// $23
+    cmp.lt (M1, 16) P1 V0047(0,0)<1;1,0> 0x40:uw                                 /// $24
+    cmp.lt (M5, 16) P1 V0048(0,0)<1;1,0> 0x40:uw                                 /// $25
+    (!P1) goto (M1, 32) _0_004                                                   /// $26
+
+_0_005:
+    gather4_scaled.R (M1, 16) %slm 0x0:ud V0057.0 V0059.0                        /// $28
+    gather4_scaled.R (M5, 16) %slm 0x0:ud V0058.0 V0060.0                        /// $29
+    movs (M1_NM, 1) T6(0) 0x1:ud                                                 /// $30
+    scatter4_scaled.R (M1, 16) T6 0x0:ud V0051.0 V0059.0                         /// $31
+    movs (M1_NM, 1) T6(0) 0x1:ud                                                 /// $32
+    scatter4_scaled.R (M5, 16) T6 0x0:ud V0052.0 V0060.0                         /// $33
+
+_0_004:
+    ret (M1, 1)                                                                  /// $35
