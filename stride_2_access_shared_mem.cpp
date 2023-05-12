@@ -97,30 +97,20 @@ int main(int argc, char **argv) {
 
         cgh.parallel_for(ndrange, 
                          [=](nd_item<3> item)[[intel::reqd_sub_group_size(SG_SZ)]] {
-                            int16_t threadIdx = item.get_local_id(2);
-                            int16_t idx_4 = threadIdx << 1;
-                            int16_t idx_5 = idx_4 & (int16_t)126;
-                            int16_t idx_8 = idx_4 & (int16_t)384;
+                            auto threadIdx = item.get_local_id(2);
+                            auto idx = threadIdx << 1;
 
-                            int32_t scratch_idx_6 = threadIdx << 1;
-                            int32_t scratch_idx_16 = scratch_idx_6 & 510;
-                            int64_t scratch_idx_17 = (int64_t)scratch_idx_16;
+                            int64_t *ptr = (int64_t *)dev_in;
+                            int64_t tmp = ptr[threadIdx];
+                            float *base = (float *)&tmp;
+                            float val = base[0];
 
-                            int64_t idx = idx_5 + idx_8;
-
-                            // // float *base = dev_in + (int64_t)(idx_8);
-                            // // float *addr = base + (int64_t)idx_5;
-                            float2 vec2;
-                            vec2.load(idx/2, pIn);
-                            float val = vec2[0];
-
-
-                            scratch[scratch_idx_17] = val;
+                            scratch[idx] = val;
                             item.barrier(sycl::access::fence_space::local_space);
-                            val = scratch[scratch_idx_17];
+                            val = scratch[idx];
                             if (threadIdx < 64) {
-                              *(dev_out+(int64_t)idx_8+(int64_t)idx_5) = val;
-                                out << "thread: " << threadIdx << " ---> input[" << idx << "] = " << val << ")\n";
+                              dev_out[idx] = val;
+                              // out << "thread: " << threadIdx << " ---> input[" << idx << "] = " << base[1] << ")\n";
                             }
                          });
     }).wait();
