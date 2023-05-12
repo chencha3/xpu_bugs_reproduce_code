@@ -77,15 +77,17 @@ float input[] = {
 void print_and_validate(float *output);
 
 int main(int argc, char **argv) {
-    queue q;
-    float * dev_in = (float *)malloc_device(sizeof(float) * ROWS * COLS, q);
-    float * dev_out = (float *)malloc_device(sizeof(float) * COLS, q);
+    sycl::queue q({property::queue::in_order(), property::queue::enable_profiling()});
 
     sycl::range<3> global(1, 1, 256);
     sycl::range<3> local(1, 1, 256);
     sycl::nd_range<3> ndrange(global, local);
 
+    float * dev_in = (float *)malloc_device(sizeof(float) * ROWS * COLS, q);
     q.memcpy(dev_in, input, sizeof(float) * ROWS * COLS).wait();
+
+    float* output = (float*)malloc(sizeof(float) * COLS);
+    float * dev_out = (float *)malloc_device(sizeof(float) * COLS, q);
 
     q.submit([&](auto &cgh) {
         sycl::stream out(65536, 256, cgh);
@@ -94,29 +96,17 @@ int main(int argc, char **argv) {
 
         cgh.parallel_for(ndrange, 
                          [=](nd_item<3> item)[[intel::reqd_sub_group_size(SG_SZ)]] {
-                            int16_t threadIdx = item.get_local_id(2);
-                            int16_t idx_4 = threadIdx * 2;
-                            int16_t idx_5 = idx_4 & (int16_t)126;
-                            int16_t idx_8 = idx_4 & (int16_t)384;
-
-                            int32_t scratch_idx_6 = threadIdx * 2;
-                            int32_t scratch_idx_16 = scratch_idx_6 & 510;
-                            int64_t scratch_idx_17 = (int64_t)scratch_idx_16;
-
-                            float *base = dev_in + (int64_t)(idx_8);
-                            float *addr = base + (int64_t)idx_5;
-
-                            // out << "input[" << threadIdx << "] = " << dev_in[index] << "\n";
-                            scratch[scratch_idx_17] = *addr;
+                            auto threadIdx = item.get_local_id(2);
+                            int64_t idx = threadIdx << 1;
+                            auto val = dev_in[idx];
+                            scratch[idx] = val;
                             item.barrier(sycl::access::fence_space::local_space);
-                            auto val = scratch[scratch_idx_17];
                             if (threadIdx < 64) {
-                              *(dev_out+(int64_t)idx_8+(int64_t)idx_5) = val;
-                              // out << "input[" << threadIdx << "] = " << dev_out[index] << "\n";
+                              dev_out[idx] = scratch[idx];
+                              // out << "thread: " << threadIdx << " ---> input[" << idx << "] = " << val << ")\n";
                             }
                          });
     }).wait();
-    float* output = (float*)malloc(sizeof(float) * COLS);
     q.memcpy(output, dev_out, sizeof(float) * COLS).wait();
     print_and_validate(output);
 
