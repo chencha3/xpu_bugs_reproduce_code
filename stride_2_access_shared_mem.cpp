@@ -86,28 +86,29 @@ int main(int argc, char **argv) {
     float * dev_in = (float *)malloc_device(sizeof(float) * ROWS * COLS, q);
     q.memcpy(dev_in, input, sizeof(float) * ROWS * COLS).wait();
 
-    float* output = (float*)malloc(sizeof(float) * COLS);
-    float * dev_out = (float *)malloc_device(sizeof(float) * COLS, q);
+    float* output = (float*)malloc(sizeof(float) * COLS * ROWS);
+    float * dev_out = (float *)malloc_device(sizeof(float) * COLS * ROWS, q);
 
     q.submit([&](auto &cgh) {
         sycl::stream out(65536, 256, cgh);
         using share_mem_t = sycl::accessor<float, 1, sycl::access::mode::read_write, sycl::access::target::local>;
-        share_mem_t scratch = share_mem_t(ROWS*COLS, cgh);
+        share_mem_t scratch = share_mem_t(ROWS*COLS*sizeof(float), cgh);
 
         cgh.parallel_for(ndrange, 
                          [=](nd_item<3> item)[[intel::reqd_sub_group_size(SG_SZ)]] {
-                            auto threadIdx = item.get_local_id(2);
-                            int64_t idx = threadIdx << 1;
-                            auto val = dev_in[idx];
-                            scratch[idx] = val;
+                            int64_t idx1 = item.get_local_id(2);
+                            int64_t idx2 = idx1 + 256;
+                            auto val1 = dev_in[idx1];
+                            auto val2 = dev_in[idx2];
+                            scratch[idx1] = val1;
+                            scratch[idx2] = val2;
                             item.barrier(sycl::access::fence_space::local_space);
-                            if (threadIdx < 64) {
-                              dev_out[idx] = scratch[idx];
+                            dev_out[idx1] = scratch[idx1];
+                            dev_out[idx2] = scratch[idx2];
                               // out << "thread: " << threadIdx << " ---> input[" << idx << "] = " << val << ")\n";
-                            }
                          });
     }).wait();
-    q.memcpy(output, dev_out, sizeof(float) * COLS).wait();
+    q.memcpy(output, dev_out, sizeof(float) * COLS * ROWS).wait();
     print_and_validate(output);
 
     free(output);
@@ -116,13 +117,16 @@ int main(int argc, char **argv) {
 
 void print_and_validate(float *output) {
   std::cout << "Output: \n";
-  for(int col = 0; col < COLS; col++ ) {
-    std::cout << std::setw(5) << output[col];
-    if ((col+1) % 32 == 0) {
-      std::cout << std::endl;
-    } else {
-      std::cout << " ";
+  for(int row = 0; row < ROWS; row++ ) {
+    for(int col = 0; col < COLS; col++ ) {
+      std::cout << std::setw(5) << output[row * COLS + col];
+      if ((col+1) % 32 == 0) {
+        std::cout << std::endl;
+      } else {
+        std::cout << " ";
+      }
     }
+    std::cout << std::endl;
   }
   std::cout << std::endl;
 
