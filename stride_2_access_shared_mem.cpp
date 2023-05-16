@@ -92,7 +92,7 @@ int main(int argc, char **argv) {
     q.submit([&](auto &cgh) {
         sycl::stream out(65536, 256, cgh);
         using share_mem_t = sycl::accessor<float, 1, sycl::access::mode::read_write, sycl::access::target::local>;
-        share_mem_t scratch = share_mem_t(ROWS*COLS*sizeof(float), cgh);
+        share_mem_t scratch = share_mem_t(atoi(argv[1]), cgh);
 
         cgh.parallel_for(ndrange, 
                          [=](nd_item<3> item)[[intel::reqd_sub_group_size(SG_SZ)]] {
